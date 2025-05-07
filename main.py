@@ -33,14 +33,16 @@ def analyze_loan_eligibility(account_name: str = Query(...), account_number: str
     if not user:
         raise HTTPException(status_code=404, detail="No matching account found.")
 
-    # Extract employment data based on your structure
-    employment = user.get("employment_information", {})
+    # Corrected structure access
+    employment = user.get("employment_information", {}).get("employment_income", {})
     financials = user.get("financial_information", {})
 
     # Employment details
     monthly_income = employment.get("monthly_income", 0)
     length_of_employment = employment.get("length_of_employment", "").lower()
     employment_status = employment.get("employment_status", "").lower()
+    employer_name = employment.get("employer_name", "")
+    job_title = employment.get("job_title", "")
 
     # Normalize employment duration
     years_employed = 0
@@ -87,17 +89,16 @@ def analyze_loan_eligibility(account_name: str = Query(...), account_number: str
     if not is_eligible:
         suggested_loan = 0
     else:
-        # Conservative logic: 3 to 5 times monthly income minus any penalty for existing loans
         multiplier = 5 if years_employed >= 2 else 3
-        penalty = len(existing_loans) * 0.5  # 0.5x income per existing loan
+        penalty = len(existing_loans) * 0.5
         suggested_loan = max((monthly_income * multiplier) - (monthly_income * penalty), 5000)
 
     return {
         "full_name": user["personal_information"]["full_name"],
         "monthly_income": monthly_income,
         "employment_status": employment_status,
-        "employer_name": employment.get("employer_name", ""),
-        "job_title": employment.get("job_title", ""),
+        "employer_name": employer_name,
+        "job_title": job_title,
         "years_employed": years_employed,
         "existing_loans": existing_loans,
         "assets": assets,
