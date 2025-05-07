@@ -33,15 +33,14 @@ def analyze_loan_eligibility(account_name: str = Query(...), account_number: str
     if not user:
         raise HTTPException(status_code=404, detail="No matching account found.")
 
+    # Extract employment data based on your structure
     employment = user.get("employment_information", {})
     financials = user.get("financial_information", {})
 
-    # Extract relevant data
+    # Employment details
     monthly_income = employment.get("monthly_income", 0)
     length_of_employment = employment.get("length_of_employment", "").lower()
     employment_status = employment.get("employment_status", "").lower()
-    existing_loans = financials.get("existing_loans", [])
-    assets = financials.get("assets", [])
 
     # Normalize employment duration
     years_employed = 0
@@ -50,6 +49,10 @@ def analyze_loan_eligibility(account_name: str = Query(...), account_number: str
             years_employed = int(length_of_employment.split()[0])
         except:
             pass
+
+    # Financial details
+    existing_loans = financials.get("existing_loans", [])
+    assets = financials.get("assets", [])
 
     # Basic scoring system
     score = 0
@@ -93,6 +96,8 @@ def analyze_loan_eligibility(account_name: str = Query(...), account_number: str
         "full_name": user["personal_information"]["full_name"],
         "monthly_income": monthly_income,
         "employment_status": employment_status,
+        "employer_name": employment.get("employer_name", ""),
+        "job_title": employment.get("job_title", ""),
         "years_employed": years_employed,
         "existing_loans": existing_loans,
         "assets": assets,
