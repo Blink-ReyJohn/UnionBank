@@ -17,6 +17,20 @@ SENDER_PASSWORD = "xwxv nifa yajn wfeb"
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://websites-2o2x.onrender.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://websites-2o2x.onrender.com"],# or ["*"] for testing
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 client = MongoClient("mongodb+srv://reyjohnandraje2002:ReyJohn17@concentrix.txv3t.mongodb.net/?retryWrites=true&w=majority&appName=Concentrix")
 db = client["LoanSystem"]
 loan_applications = db["loan_applications"]
