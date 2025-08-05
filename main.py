@@ -30,7 +30,7 @@ def create_reset_token(email: str):
    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
    return token, expire
 def send_reset_email(to_email: str, token: str):
-   reset_link = f"http://localhost:8000/reset_form.html?token={token}"
+   reset_link = f"https://websites-2o2x.onrender.com?token={token}"
    subject = "Password Reset Request"
    body = f"""
    Hi,
