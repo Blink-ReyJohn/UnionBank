@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
 from typing import Optional
+from pydantic import BaseModel
 
 SECRET_KEY = "demo-secret-key"
 ALGORITHM = "HS256"
@@ -114,6 +115,9 @@ def analyze_loan_eligibility(account_name: str = Query(...), account_number: str
        "recommendation": "Approved for new loan" if is_eligible else "Needs further review or not eligible",
        "suggested_max_loan_amount": f"₱{int(suggested_loan):,}"
    }
+
+class EmailRequest(BaseModel):
+   email:str
    
 @app.post("/request_password_reset")
 def request_password_reset(
