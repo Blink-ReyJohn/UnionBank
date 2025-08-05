@@ -112,12 +112,19 @@ def analyze_loan_eligibility(account_name: str = Query(...), account_number: str
        "recommendation": "Approved for new loan" if is_eligible else "Needs further review or not eligible",
        "suggested_max_loan_amount": f"₱{int(suggested_loan):,}"
    }
+   
 @app.post("/request_password_reset")
-def request_password_reset(email: str = Body(...)):
-   user = loan_applications.find_one({"login_credentials.email": email})
+def request_password_reset(
+   payload: Optional[EmailRequest] = Body(None),
+   email: Optional[str] = Query(None)
+):
+   user_email = payload.email if payload and payload.email else email
+   if not user_email:
+       raise HTTPException(status_code=400, detail="Email is required.")
+   user = loan_applications.find_one({"login_credentials.email": user_email})
    if not user:
        raise HTTPException(status_code=404, detail="No user found with this email.")
-   token, expiry = create_reset_token(email)
+   token, expiry = create_reset_token(user_email)
    loan_applications.update_one(
        {"_id": user["_id"]},
        {"$set": {
@@ -125,8 +132,9 @@ def request_password_reset(email: str = Body(...)):
            "login_credentials.token_expiry": expiry
        }}
    )
-   send_reset_email(email, token)
+   send_reset_email(user_email, token)
    return {"message": "Password reset email sent."}
+   
 @app.post("/reset_password")
 def reset_password(token: str = Body(...), new_password: str = Body(...)):
    try:
