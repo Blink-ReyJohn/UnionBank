@@ -19,7 +19,7 @@ client = MongoClient("mongodb+srv://reyjohnandraje2002:ReyJohn17@concentrix.txv3
 db = client["LoanSystem"]
 loan_applications = db["loan_applications"]
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 def get_password_hash(password):
    return pwd_context.hash(password)
 def verify_password(plain_password, hashed_password):
