@@ -6,6 +6,7 @@ from jose import jwt
 from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
+from typing import Optional
 
 SECRET_KEY = "demo-secret-key"
 ALGORITHM = "HS256"
@@ -58,6 +59,7 @@ def verify_account(account_name: str = Query(...), account_number: str = Query(.
        return user
    else:
        raise HTTPException(status_code=404, detail="No matching account found.")
+      
 @app.get("/analyze_loan_eligibility")
 def analyze_loan_eligibility(account_name: str = Query(...), account_number: str = Query(...)):
    user = loan_applications.find_one({
