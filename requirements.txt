@@ -2,5 +2,5 @@ fastapi
 uvicorn
 pymongo
 python-jose
-passlib[bcrypt]
+passlib
 python-dotenv
