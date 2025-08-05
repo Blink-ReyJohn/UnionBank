@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query, Body
+import fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from bson import ObjectId
 from passlib.context import CryptContext
